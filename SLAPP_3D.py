@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.axes3d as p3
 import numpy.random as npr
+import numpy as np
 
 def checkRunningInIPython():
     try:
@@ -44,24 +45,35 @@ class AgBase():
 
 def updateData():
     global ax,IPy,dots
-    xList0=[]
-    yList0=[]
-    zList0=[]
-    xList1=[]
-    yList1=[]
-    zList1=[]
     
+    b0=b1=0
+    for i in range(len(agList)):
+        if agList[i].reportBreed() == 0: b0+=1
+        if agList[i].reportBreed() == 1: b1+=1
+
+    #with matplotlib 3.3.2 set_3d_properties requires vectors with shape so we need to use 
+    # the numpy arrasy structure
+    xList0=np.array([0.0]*b0)
+    yList0=np.array([0.0]*b0)
+    zList0=np.array([0.0]*b0)
+    xList1=np.array([0.0]*b1)
+    yList1=np.array([0.0]*b1)
+    zList1=np.array([0.0]*b1)
+    
+    i0=i1=-1
     for i in range(len(agList)):
         x,y,z=agList[i].reportPos()
         if agList[i].reportBreed() == 0:
-            xList0.append(x)
-            yList0.append(y)
-            zList0.append(z)
+            i0+=1
+            xList0[i0]=x
+            yList0[i0]=y
+            zList0[i0]=z
         if agList[i].reportBreed() == 1:
-            xList1.append(x)
-            yList1.append(y)
-            zList1.append(z)
-
+            i1+=1
+            xList1[i1]=x
+            yList1[i1]=y
+            zList1[i1]=z
+                        
     if IPy:
         dots[0].set_data(xList0, yList0)
         dots[0].set_3d_properties(zList0)
